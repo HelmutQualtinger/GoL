@@ -6,7 +6,7 @@ import tkinter
 
 gol = GoL()
 
-colors = ["#FFFFFF", "#FFFF80", "#FFFF00", "#FF8000", "#FF4000", "#FF2000", "#FF0000", "#c00000", "#800000", "#000000"]
+colors = ["#FFFFFF", "#FFFF80", "#FFFF00", "#FF8000", "#FF0020", "#800040", "#400060", "#000040", "#200010", "#000000"]
 
 
 def updateCanvas(C):
@@ -20,9 +20,9 @@ def updateCanvas(C):
     C.itemconfigure(tagOrId="all", fill="lightblue", width=0)
     for (row, column) in gol.neighbours:
         color = colors[gol.neighbours[(row, column)]]
-        width = 1
+        width = 0
         if (row, column) in gol.universe:
-            width = 5
+            width = 1
         tag = str(row) + ":" + str(column)
         C.itemconfigure(tagOrId=str(row) + ":" + str(column), fill=color, width=width)
 
@@ -30,7 +30,7 @@ def updateCanvas(C):
 #
 # Interface routines for Tk
 #
-cellSize=15
+cellSize=7
 def toggle(e):
     """
     Calll back function for taggling cell, calculates screen coordinates in universum coordinate
@@ -59,7 +59,10 @@ def loopbFirst():
     switch into keepRunning mode and lauch timer step generation
     """
     global keepRunning
+    global loopButton
+    loopButton.config(text="Stop",command=stopb)
     keepRunning = True
+
     loopb()
 
 
@@ -71,7 +74,7 @@ def loopb():
     global gol
     gol.step()
     refreshScreen += 1
-    if refreshScreen % 5 == 0:  # Update screen only ever 10th step for speed up
+    if refreshScreen % 7 == 0:  # Update screen only ever 10th step for speed up
         updateCanvas(C)
     if (keepRunning):  # chekc whether stop button was pressedn
         top.after(1, loopb)
@@ -82,6 +85,7 @@ def stopb():
     """
     global keepRunning
     keepRunning = False
+    loopButton.config(text="Loop",command=loopbFirst)
 
 
 def clearb():
@@ -101,17 +105,18 @@ def GoLGUI():
     global C  # make the canvas widget accessible to the updateCanvas function
     global top  # make the top window available to the background tasks and to whoever needs it
     global refreshScreen  # make the generation counter acccessible to whoever needs it
+    global loopButton
     refreshScreen = 0
     top = tkinter.Tk()
     top.title("Game of Life")
     l = tkinter.Label(top, text="Game of Life")
     l.config(font=("Arial", 44))
     l.pack()
-    C = tkinter.Canvas(top, bg="white", width=1000, height=800)
+    C = tkinter.Canvas(top, bg="white",width=1800,height=800)
     rect = {}
     # prepare the GUI Window with all cells predrawn, to be configured later
-    for row in range(80):
-        for column in range(50):
+    for row in range(150):
+        for column in range(80):
             rect[(row, column)] = C.create_oval(row * cellSize, column * cellSize, row * cellSize + cellSize-1, column * cellSize + cellSize-1,
                                                 tag=str(row) + ":" + str(column))
             C.tag_bind(rect[(row, column)], "<ButtonPress-1>", toggle)
@@ -126,8 +131,8 @@ def GoLGUI():
     nextButton.pack(side=tkinter.LEFT)
     loopButton = tkinter.Button(buttonframe, text='Loop', width=15, command=loopbFirst)
     loopButton.pack(side=tkinter.LEFT)
-    stopButton = tkinter.Button(buttonframe, text='Stop', width=15, command=stopb)
-    stopButton.pack(side=tkinter.LEFT)
+   # stopButton = tkinter.Button(buttonframe, text='Stop', width=15, command=stopb)
+   # stopButton.pack(side=tkinter.LEFT)
     global refreshLabel
     refreshLabel = tkinter.Label(buttonframe, text=str(refreshScreen), width=25)
     refreshLabel.pack(side=tkinter.LEFT)
