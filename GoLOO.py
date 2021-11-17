@@ -7,7 +7,7 @@ class GoL():
 Methods
  init  initialise game and rules
     """
-    def __init__(self, cell_list={}, stay_alive={2, 3}, get_born={3,4}):
+    def __init__(self, cell_list={}, stay_alive={2, 3}, get_born={3}):
         """
         create initialise board, , and rules for when a cell is to be born
         or survive depending on the number of its neighbours
