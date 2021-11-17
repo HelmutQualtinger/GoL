@@ -19,9 +19,7 @@ def updateCanvas(C):
     CellCounterLabel.configure(text="Living Cells:  " + str(len(gol.universe)))
     C.itemconfigure(tagOrId="all", fill="lightblue", width=0)
     for (row, column) in gol.neighbours:
-        color = "white"
-        if (row, column) in gol.neighbours:
-            color = colors[gol.neighbours[(row, column)]]
+        color = colors[gol.neighbours[(row, column)]]
         width = 1
         if (row, column) in gol.universe:
             width = 5
@@ -32,31 +30,17 @@ def updateCanvas(C):
 #
 # Interface routines for Tk
 #
-
+cellSize=15
 def toggle(e):
     """
     Calll back function for taggling cell, calculates screen coordinates in universum coordinate
     :param e: klick point
     :return:
     """
-    col = e.y // 10
-    row = e.x // 10
+    col = e.y //cellSize
+    row = e.x //cellSize
     gol.toggle(row, col)
     updateCanvas(C)
-
-
-def step(e):
-    """
-     Calll back function for taggling cell, calculates screen coordinates in universum coordinate
-     :param e: klick point
-     :return:
-     """
-    global gol
-    for i in range(1):
-        gol.step()
-    #    print(e)
-    updateCanvas(C)
-
 
 def stepb():
     """
@@ -84,9 +68,10 @@ def loopb():
     global refreshScreen
     global top
     global keepRunning
-    stepGoL()
+    global gol
+    gol.step()
     refreshScreen += 1
-    if refreshScreen % 1 == 0:  # Update screen only ever 10th step for speed up
+    if refreshScreen % 5 == 0:  # Update screen only ever 10th step for speed up
         updateCanvas(C)
     if (keepRunning):  # chekc whether stop button was pressedn
         top.after(1, loopb)
@@ -126,8 +111,8 @@ def GoLGUI():
     rect = {}
     # prepare the GUI Window with all cells predrawn, to be configured later
     for row in range(80):
-        for column in range(80):
-            rect[(row, column)] = C.create_oval(row * 10, column * 10, row * 10 + 9, column * 10 + 9,
+        for column in range(50):
+            rect[(row, column)] = C.create_oval(row * cellSize, column * cellSize, row * cellSize + cellSize-1, column * cellSize + cellSize-1,
                                                 tag=str(row) + ":" + str(column))
             C.tag_bind(rect[(row, column)], "<ButtonPress-1>", toggle)
     C.pack()

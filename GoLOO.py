@@ -48,13 +48,13 @@ Methods
         """
         new_universe = set([])  # new universe initially empty
         neighbours = self.countNeighbours()
-        print(neighbours)
+#     print(neighbours)
         for cell in neighbours:
             if cell in self.universe:
                 if neighbours[cell] in self.stay_alive:
                     new_universe = new_universe | {cell}
-                    print(str(cell) + "survived")
-            elif cell in self.get_born:
+#                  print(str(cell) + "survived")
+            elif neighbours[cell] in self.get_born:
                 new_universe = new_universe | {cell}
-                print(str(cell) + "born")
+#              print(str(cell) + "born")
         self.universe = new_universe
