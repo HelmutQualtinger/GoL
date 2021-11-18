@@ -1,3 +1,7 @@
+"""
+User interface for manipulation of Conways Game of life
+"""
+
 import sys
 import tkinter
 from tkinter import filedialog as fd
@@ -6,7 +10,9 @@ from tkinter import filedialog as fd
 from GoLOO import GoL
 
 gol = GoL()
-colors = ["#FFFFFF", "#FFFF80", "#FFFF00", "#FF8000", "#FF0020", "#800040", "#400060", "#000040", "#200010", "#000000"]
+colors = ["#FFFFFF", "#FFFF80", "#FFFF00", "#FF8000",
+          "#FF0020", "#800040", "#400060", "#000040",
+          "#200010", "#000000"]
 
 
 def updateCanvas(C):
@@ -72,11 +78,11 @@ refreshScreen = 0
 def loopbFirst():
     """
     start single stepping in background for the first time,
-    switch into keepRunning mode and lauch timer step generation
+    switch into keepRunning mode and launch timer step generation
     """
     global keepRunning
     global loopButton
-    loopButton.config(text="Stop", command=stopb)
+    loopButton.config(text="Stop", command=stopb)  # Change Button to Stop
     keepRunning = True
 
     loopb()
@@ -90,10 +96,10 @@ def loopb():
     global gol
     gol.step()
     refreshScreen += 1
-    if refreshScreen % 7 == 0:  # Update screen only ever 10th step for speed up
+    if refreshScreen % 7 == 0:  # Update screen only ever ith step for speed up
         updateCanvas(C)
     if (keepRunning):  # chekc whether stop button was pressedn
-        top.after(1, loopb)
+        top.after(1, loopb)   # schedule again
 
 
 def stopb():
@@ -117,6 +123,9 @@ def clearb():
 
 
 def loadfile():
+    """" Read in a file containing the set cells and the limits for survinving and new to be born cells
+        file format is in Python set format, separated by semicolons
+    """
     global C
     global gol
     with tkinter.filedialog.askopenfile(mode='r') as f:
@@ -128,6 +137,9 @@ def loadfile():
 
 
 def savefile():
+    """" Write current universe to  a file containing the set cells and the limits for surviving and new to be born cells
+         file format is in Python set format, separated by semicolons
+     """
     with tkinter.filedialog.asksaveasfile(mode='w') as f:
         f.write(str(gol.universe) +
                 ";" +
@@ -137,16 +149,18 @@ def savefile():
 
 
 def updateRules():
-    global stay_alive_vars
+    """ read the rules for cell survival and creation from the GUI Control check boxes
+    and transfer them into the attribult of the GoL class object"""
+    global stay_alive_vars  # list of Tk Vars connected to check boxes
     global get_born_vars
     global gol
 
-    for i in range(9):
-        if stay_alive_vars[i].get() != 0:
-            gol.stay_alive |= {i}
+    for i in range(9):                    # from 0 to 8 possible neigbours
+        if stay_alive_vars[i].get() != 0: # if check box set
+            gol.stay_alive |= {i}         # set the corresponding element in the Gol class attribute
         else:
-            gol.stay_alive -= {i}
-        if get_born_vars[i].get() != 0:
+            gol.stay_alive -= {i}         # otherwise clear
+        if get_born_vars[i].get() != 0:   # mutatis mutandis for newly born cells
             gol.get_born |= {i}
         else:
             gol.get_born -= {i}
@@ -163,13 +177,19 @@ def GoLGUI():
 
     global rect
     rect = {}
+
     refreshScreen = 0
+    #
+    # General window set up
+    #
     top = tkinter.Tk()
     top.title("Game of Life")
     l = tkinter.Label(top, text="Game of Life")
     l.config(font=("Arial", 14))
     l.pack()
-
+    #
+    #   Check boxes determining Game of life rules in terms of number of neighbours
+    #
     rulesframe = tkinter.Frame(top)
     rulesframe.pack(side=tkinter.TOP, expand=True)
     stay_alive_label = tkinter.Label(rulesframe,
@@ -203,6 +223,9 @@ def GoLGUI():
             get_born_vars[i].set(0)
         cn.pack(side=tkinter.LEFT)
 
+    #
+    #   Create canvas for cell display
+    #
     C = tkinter.Canvas(top, bg="white", width=cellSize * 80, height=cellSize * 50)
 
     # prepare the GUI Window with all cells predrawn, to be configured later
@@ -227,8 +250,7 @@ def GoLGUI():
     clearButton = tkinter.Button(buttonframe, text="Clear", width=15, command=clearb)
     clearButton.pack(side=tkinter.LEFT)
 
-    # stopButton = tkinter.Button(buttonframe, text='Stop', width=15, command=stopb)
-    # stopButton.pack(side=tkinter.LEFT)
+
     labelframe = tkinter.Frame(top)
     labelframe.pack(side=tkinter.TOP)
     global refreshLabel
@@ -240,20 +262,31 @@ def GoLGUI():
     CellCounterLabel.pack(side=tkinter.LEFT)
 
 
-
+    #
+    # Menubar or saving and loading of files and quiting
+    #
     menubar = tkinter.Menu(top, font=("Arial", 20))
     filemenu = tkinter.Menu(menubar, tearoff=0)
     filemenu.configure(font=("Arial", 14, "bold"))
+    #
     filemenu.add_command(label="Open", command=loadfile, accelerator="Ctrl+O")
     filemenu.add_command(label="Save", command=savefile, accelerator="Ctrl+S")
     filemenu.add_separator()
     filemenu.add_command(label="Exit", command=top.quit, accelerator="Ctrl+Q")
     mm = menubar.add_cascade(label="File", font=("Verdana", 14), menu=filemenu)
+    # accelerator tag above is not enough
+    # need to intercept key events to the top level window
     top.bind_all("<Control-q>", lambda event: top.quit())
     top.bind_all("<Control-o>", lambda event: loadfile())
     top.bind_all("<Control-s>", lambda event: savefile())
     top.config(menu=menubar)
+    #
+    # refresh canvas
+    #
     updateCanvas(C)
+    #
+    # main gui loop
+    #
     top.mainloop()
 
 

@@ -9,7 +9,7 @@ Methods
     """
     def __init__(self, cell_list={}, stay_alive={2, 3}, get_born={3}):
         """
-        create initialise board, , and rules for when a cell is to be born
+        create initialised board, , and rules for when a cell is to be born
         or survive depending on the number of its neighbours
         """
         self.universe = set(cell_list)
