@@ -16,6 +16,9 @@ colors = ["#FFFFFF", "#FFFF80", "#FFFF00", "#FF8000",
 
 
 def updateCanvas(C):
+    """
+    #update the user interface with the information from the Game of Life class obejct
+    """
     global rect
     global refreshLabel
     global refreshScreen
