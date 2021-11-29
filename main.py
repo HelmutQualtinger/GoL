@@ -52,7 +52,7 @@ def updateCanvas(C):
 #
 # Interface routines for Tk
 #
-cellSize = 15
+cellSize = 10
 
 
 def toggle(e):
@@ -215,7 +215,7 @@ def GoLGUI():
                                    text="New cells gets born on neighbours",
                                    font=("Arial", 12))
     get_born_label.pack(side=tkinter.LEFT)
-    get_born_vars = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    get_born_vars = [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]
     for i in range(9):
         get_born_vars[i] = tkinter.IntVar()
         cn = tkinter.Checkbutton(rulesframe, text=str(i), variable=get_born_vars[i], onvalue=1, offvalue=0,
@@ -229,11 +229,11 @@ def GoLGUI():
     #
     #   Create canvas for cell display
     #
-    C = tkinter.Canvas(top, bg="white", width=cellSize * 80, height=cellSize * 50)
+    C = tkinter.Canvas(top, bg="white", width=cellSize * 100, height=cellSize * 60)
 
     # prepare the GUI Window with all cells predrawn, to be configured later
-    for row in range(80):
-        for column in range(50):
+    for row in range(100):
+        for column in range(60):
             rect[(row, column)] = C.create_rectangle(row * cellSize, column * cellSize, row * cellSize + cellSize - 1,
                                                      column * cellSize + cellSize - 1,
                                                      tag=str(row) + ":" + str(column))
