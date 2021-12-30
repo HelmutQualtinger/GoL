@@ -52,7 +52,7 @@ def updateCanvas(C):
 #
 # Interface routines for Tk
 #
-cellSize = 10
+cellSize = 8
 
 
 def toggle(e):
@@ -235,12 +235,12 @@ def GoLGUI():
     #
     #   Create canvas for cell display
     #
-    C = tkinter.Canvas(top, bg="white", width=cellSize * 100, height=cellSize * 60)
+    C = tkinter.Canvas(top, bg="white", width=cellSize * 120, height=cellSize * 80)
 
     # prepare the GUI Window with all cells predrawn, to be configured later
 
-    for row in range(100):
-        for column in range(60):
+    for row in range(120):
+        for column in range(80):
             rect[(row, column)] = C.create_rectangle(row * cellSize, column * cellSize, row * cellSize + cellSize - 1,
                                                      column * cellSize + cellSize - 1,
 #                                                     tag=str(row) + ":" + str(column),
