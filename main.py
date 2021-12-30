@@ -6,14 +6,10 @@ import sys
 import tkinter
 from tkinter import filedialog as fd
 
-# sys.path.append(".")
 from GoLOO import GoL
-
+oldUniverse=[]
 gol = GoL()
-colors = ["#FFFFFF", "#FFFF80", "#FFFF00", "#FF8000",
-          "#FF0020", "#800040", "#400060", "#000040",
-          "#200010", "#000000"]
-
+colors = ["#FFFFFF", "#FFFF80", "#FFFF00", "#FF8000","#FF0020", "#800040", "#400060", "#000040","#200010", "#000000"]
 
 def updateCanvas(C):
     """
@@ -26,18 +22,22 @@ def updateCanvas(C):
     global gol
     global stay_alive_vars
     global get_born_vars
+    global oldUniverse
     gol.countNeighbours()
     refreshLabel.configure(text="Gernerations: " + str(refreshScreen))
     CellCounterLabel.configure(text="Living Cells:  " + str(len(gol.universe)))
-    C.itemconfigure(tagOrId="all", fill="lightblue", width=0)
-    for (row, column) in gol.neighbours:
+#    C.itemconfigure(tagOrId="all", fill="lightblue", width=0)
+    C.itemconfigure(tagOrId="changed", fill="lightgreen", width=0)
+    C.dtag("changed", "changed")
+    for (row, column) in gol.neighbours :
         if (row, column) in rect:
             color = colors[gol.neighbours[(row, column)]]
             width = 0
             if (row, column) in gol.universe:
-                width = 1
-            #           tag = str(row) + ":" + str(column)
-            C.itemconfigure(tagOrId=rect[(row, column)], fill=color, width=width)
+                width = 2
+            C.itemconfigure(tagOrId= 
+            rect[(row, column)],
+             fill=color, width=width, tags="changed")
     for i in range(9):
         if i in gol.get_born:
             get_born_vars[i].set(1)
@@ -71,7 +71,9 @@ def stepb():
     """
      Button function for a single step ,
      """
+    global refreshScreen
     gol.step()
+    refreshScreen += 1
     updateCanvas(C)
 
 
@@ -97,13 +99,15 @@ def loopb():
     global top
     global keepRunning
     global gol
+
+
     gol.step()
+
     refreshScreen += 1
-    if refreshScreen % 7 == 0:  # Update screen only ever ith step for speed up
+    if refreshScreen % 1 == 0:  # Update screen only ever ith step for speed up
         updateCanvas(C)
     if (keepRunning):  # chekc whether stop button was pressedn
         top.after(1, loopb)   # schedule again
-
 
 def stopb():
     """ switch of background task
@@ -119,8 +123,10 @@ def clearb():
     """
     global C
     global gol
+    global refreshScreen
     gol = GoL()
     gol.countNeighbours()
+    refreshScreen =0
     updateCanvas(C)
     print("cleared...")
 
@@ -232,11 +238,14 @@ def GoLGUI():
     C = tkinter.Canvas(top, bg="white", width=cellSize * 100, height=cellSize * 60)
 
     # prepare the GUI Window with all cells predrawn, to be configured later
+
     for row in range(100):
         for column in range(60):
             rect[(row, column)] = C.create_rectangle(row * cellSize, column * cellSize, row * cellSize + cellSize - 1,
                                                      column * cellSize + cellSize - 1,
-                                                     tag=str(row) + ":" + str(column))
+#                                                     tag=str(row) + ":" + str(column),
+                                                     fill="lightblue", width=0)
+#            C.itemconfigure(tagOrId=rect[(row, column)], fill="lightblue", width=0)
     #       C.tag_bind(rect[(row, column)], "<ButtonPress-1>", toggle)
     C.bind("<ButtonPress-1>", toggle)
     C.pack()
@@ -264,9 +273,8 @@ def GoLGUI():
     CellCounterLabel = tkinter.Label(labelframe, text=str(len(gol.universe)), width=25)
     CellCounterLabel.pack(side=tkinter.LEFT)
 
-
     #
-    # Menubar or saving and loading of files and quiting
+    # Menubar for saving and loading of files and quiting
     #
     menubar = tkinter.Menu(top, font=("Arial", 20))
     filemenu = tkinter.Menu(menubar, tearoff=0)
@@ -291,6 +299,4 @@ def GoLGUI():
     # main gui loop
     #
     top.mainloop()
-
-
 GoLGUI()
