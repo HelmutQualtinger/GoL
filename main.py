@@ -104,7 +104,7 @@ def loopb():
     gol.step()
 
     refreshScreen += 1
-    if refreshScreen % 1 == 0:  # Update screen only ever ith step for speed up
+    if refreshScreen % 7 == 0:  # Update screen only ever ith step for speed up
         updateCanvas(C)
     if (keepRunning):  # chekc whether stop button was pressedn
         top.after(1, loopb)   # schedule again
@@ -124,11 +124,26 @@ def clearb():
     global C
     global gol
     global refreshScreen
+    C.itemconfigure(tagOrId="all", fill="pink", width=0)
     gol = GoL()
     gol.countNeighbours()
     refreshScreen =0
     updateCanvas(C)
     print("cleared...")
+import random as r
+
+def randomb():
+    global C
+    global gol
+    global refreshScreen
+    clearb()
+    for tries in range(20):
+        row = r.randint(60,60+4)
+        col = r.randint(40,40+4)
+        gol.toggle(row,col)
+    gol.countNeighbours()
+    updateCanvas(C)
+
 
 
 def loadfile():
@@ -235,17 +250,16 @@ def GoLGUI():
     #
     #   Create canvas for cell display
     #
-    C = tkinter.Canvas(top, bg="white", width=cellSize * 120, height=cellSize * 80)
+    C = tkinter.Canvas(top, bg="white", width=cellSize * 180, height=cellSize * 80)
 
     # prepare the GUI Window with all cells predrawn, to be configured later
 
-    for row in range(120):
+    for row in range(180):
         for column in range(80):
             rect[(row, column)] = C.create_rectangle(row * cellSize, column * cellSize, row * cellSize + cellSize - 1,
                                                      column * cellSize + cellSize - 1,
 #                                                     tag=str(row) + ":" + str(column),
                                                      fill="lightblue", width=0)
-#            C.itemconfigure(tagOrId=rect[(row, column)], fill="lightblue", width=0)
     #       C.tag_bind(rect[(row, column)], "<ButtonPress-1>", toggle)
     C.bind("<ButtonPress-1>", toggle)
     C.pack()
@@ -261,6 +275,8 @@ def GoLGUI():
     loopButton.pack(side=tkinter.LEFT)
     clearButton = tkinter.Button(buttonframe, text="Clear", width=15, command=clearb)
     clearButton.pack(side=tkinter.LEFT)
+    randomButton = tkinter.Button(buttonframe, text="Random", width=15, command=randomb)
+    randomButton.pack(side=tkinter.LEFT)
 
 
     labelframe = tkinter.Frame(top)
